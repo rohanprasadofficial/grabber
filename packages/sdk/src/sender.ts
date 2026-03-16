@@ -68,7 +68,7 @@ export function formatBagForCopilot(bag: BagEntry[]): string {
     prompt += '\n';
   }
 
-  prompt += `---\nApply these changes using the project's styling approach (makeStyles / Griffel / CSS modules). Ensure the changes match the existing patterns in each file.\n`;
+  prompt += `---\nApply these changes using the project's existing styling approach. Ensure the changes match the existing patterns in each file.\n`;
 
   return prompt;
 }

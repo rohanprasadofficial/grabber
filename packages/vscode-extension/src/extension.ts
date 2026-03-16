@@ -182,8 +182,8 @@ function buildStylePrompt(
 ): string {
   const parts: string[] = [];
 
-  // The side panel already builds a well-formatted prompt with style changes,
-  // Griffel slots, Fluent UI tokens, and context. Add component file context.
+  // The side panel already builds a well-formatted prompt with style changes
+  // and context. Add component file context.
   parts.push('## Style Editor Changes\n');
 
   if (context?.component) {
