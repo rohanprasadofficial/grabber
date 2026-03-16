@@ -40,7 +40,7 @@ export class GrabberDevTools {
       showActivateButton: config.showActivateButton ?? true,
     };
 
-    this.selector = new ElementSelector((payload) => this.handleElementSelected(payload));
+    this.selector = new ElementSelector((payload, element) => this.handleElementSelected(payload, element));
 
     // Wire up the side panel drawer with direct callbacks (replaces chrome.runtime messaging)
     this.drawer = new SidePanelDrawer({
@@ -108,6 +108,7 @@ export class GrabberDevTools {
    * Activate the element selector.
    */
   activate(): void {
+    this.drawer.show();
     this.selector.activate();
   }
 
@@ -222,7 +223,7 @@ export class GrabberDevTools {
 
   // ===== Internal =====
 
-  private handleElementSelected = (payload: ElementStylePayload): void => {
+  private handleElementSelected = (payload: ElementStylePayload, _element: HTMLElement): void => {
     this.cachedPayload = payload;
     this.liveChanges.clear();
     this.onPayloadUpdate?.(payload);

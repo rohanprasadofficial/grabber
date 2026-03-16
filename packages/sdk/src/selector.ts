@@ -7,7 +7,7 @@ import { getFiberData, getFiberDataWithRetry, fiberDataToComponentInfo, type Fib
 import { extractComputedStyles, extractStyleData } from './styles';
 import type { ElementContext, StyleData, ElementStylePayload } from './types';
 
-export type ElementSelectedCallback = (payload: ElementStylePayload) => void;
+export type ElementSelectedCallback = (payload: ElementStylePayload, element: HTMLElement) => void;
 
 export class ElementSelector {
   private isActive = false;
@@ -305,7 +305,7 @@ export class ElementSelector {
       matchedRules,
     };
 
-    this.onElementSelected(payload);
+    this.onElementSelected(payload, element);
   }
 
   private handleKeyDown(event: KeyboardEvent): void {

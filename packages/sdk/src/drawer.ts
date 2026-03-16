@@ -45,6 +45,10 @@ export class SidePanelDrawer {
 
     this.isOpen = true;
     this.container!.style.transform = 'translateX(0)';
+    // Push page content to the left so the drawer doesn't overlap
+    const width = this.container!.offsetWidth || 320;
+    document.documentElement.style.marginRight = `${width}px`;
+    document.documentElement.style.transition = 'margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
   }
 
   hide(): void {
@@ -54,6 +58,7 @@ export class SidePanelDrawer {
     if (this.container) {
       this.container.style.transform = 'translateX(100%)';
     }
+    document.documentElement.style.marginRight = '';
   }
 
   toggle(): void {
@@ -63,6 +68,8 @@ export class SidePanelDrawer {
 
   destroy(): void {
     window.removeEventListener('message', this.handleMessage);
+    document.documentElement.style.marginRight = '';
+    document.documentElement.style.transition = '';
     this.container?.remove();
     this.container = null;
     this.iframe = null;
@@ -159,6 +166,9 @@ export class SidePanelDrawer {
       const delta = startX - e.clientX;
       const newWidth = Math.max(280, Math.min(600, startWidth + delta));
       this.container!.style.width = `${newWidth}px`;
+      if (this.isOpen) {
+        document.documentElement.style.marginRight = `${newWidth}px`;
+      }
     };
 
     const onUp = () => {
