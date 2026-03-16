@@ -44,9 +44,45 @@ fi
 success "pnpm $(pnpm -v)"
 
 if ! command -v code &>/dev/null; then
-  warn "VS Code CLI ('code') not found — skipping extension install."
-  warn "To enable: VS Code → Cmd+Shift+P → 'Shell Command: Install code command'"
-  SKIP_VSCODE=1
+  # On macOS, the CLI may exist inside the app bundle but not be on PATH
+  if [ -f "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]; then
+    warn "VS Code found but 'code' CLI not on PATH — adding it..."
+    export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+  else
+    warn "VS Code not found — installing..."
+    if [[ "$OSTYPE" == darwin* ]]; then
+      if command -v brew &>/dev/null; then
+        brew install --cask visual-studio-code
+      else
+        warn "Homebrew not found — installing Homebrew first..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install --cask visual-studio-code
+      fi
+      export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+    elif [[ "$OSTYPE" == linux* ]]; then
+      if command -v apt-get &>/dev/null; then
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/ms.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/ms.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
+        sudo apt-get update && sudo apt-get install -y code
+      elif command -v dnf &>/dev/null; then
+        sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+        echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo
+        sudo dnf install -y code
+      else
+        fail "Unsupported Linux package manager — install VS Code manually from https://code.visualstudio.com"
+        SKIP_VSCODE=1
+      fi
+    else
+      fail "Unsupported OS — install VS Code manually from https://code.visualstudio.com"
+      SKIP_VSCODE=1
+    fi
+  fi
+  if [ -z "$SKIP_VSCODE" ] && command -v code &>/dev/null; then
+    success "VS Code installed"
+  elif [ -z "$SKIP_VSCODE" ]; then
+    fail "VS Code installation failed — skipping extension install"
+    SKIP_VSCODE=1
+  fi
 fi
 
 # ── Step 2: Clone repo ──
