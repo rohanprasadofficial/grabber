@@ -47,9 +47,25 @@ Success "Node.js $(node -v)"
 
 # pnpm
 if (!(Get-Command pnpm -ErrorAction SilentlyContinue)) {
-    Warn "pnpm not found — installing via corepack..."
-    corepack enable
-    corepack prepare pnpm@9 --activate
+    Warn "pnpm not found — installing via npm..."
+    try {
+        npm install -g pnpm@9
+    } catch {
+        # Fallback to corepack if npm global install fails
+        try {
+            corepack enable
+            corepack prepare pnpm@9 --activate
+        } catch {
+            Fail "Could not install pnpm. Try running: npm install -g pnpm@9"
+            exit 1
+        }
+    }
+    # Refresh PATH so pnpm is discoverable
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+    if (!(Get-Command pnpm -ErrorAction SilentlyContinue)) {
+        Fail "pnpm still not found after install. Close this terminal, open a new one, and re-run the script."
+        exit 1
+    }
 }
 Success "pnpm $(pnpm -v)"
 
