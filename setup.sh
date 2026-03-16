@@ -14,6 +14,9 @@ success() { echo -e "  ${GREEN}✓${NC} $1"; }
 warn() { echo -e "  ${YELLOW}!${NC} $1"; }
 fail() { echo -e "  ${RED}✗${NC} $1"; }
 
+# Track missing prerequisites for summary at the end
+MISSING_PREREQS=()
+
 # ── Configuration ──
 REPO_URL="https://github.com/rohanprasadofficial/grabber.git"
 CLONE_DIR="grabber-demo"
@@ -25,24 +28,134 @@ echo -e "${BOLD}╚════════════════════�
 # ── Step 1: Prerequisites ──
 step 1 "Checking prerequisites..."
 
+# Git
 if ! command -v git &>/dev/null; then
-  fail "git not found. Install from https://git-scm.com"
-  exit 1
+  warn "git not found — attempting to install..."
+  if [[ "$OSTYPE" == darwin* ]]; then
+    # macOS: xcode-select installs git via Command Line Tools
+    if xcode-select --install 2>/dev/null; then
+      warn "Xcode Command Line Tools installer launched — please complete the installation and re-run this script."
+      MISSING_PREREQS+=("git")
+    else
+      fail "Could not install git automatically."
+      MISSING_PREREQS+=("git")
+    fi
+  elif [[ "$OSTYPE" == linux* ]]; then
+    if command -v apt-get &>/dev/null; then
+      sudo apt-get update && sudo apt-get install -y git
+    elif command -v dnf &>/dev/null; then
+      sudo dnf install -y git
+    elif command -v yum &>/dev/null; then
+      sudo yum install -y git
+    else
+      fail "Could not install git automatically."
+      MISSING_PREREQS+=("git")
+    fi
+  else
+    MISSING_PREREQS+=("git")
+  fi
+  hash -r 2>/dev/null
 fi
-success "git $(git --version | awk '{print $3}')"
+if command -v git &>/dev/null; then
+  success "git $(git --version | awk '{print $3}')"
+else
+  fail "git is not installed."
+  MISSING_PREREQS+=("git")
+fi
 
+# Node.js
 if ! command -v node &>/dev/null; then
-  fail "Node.js not found. Install from https://nodejs.org (v18+)"
-  exit 1
+  warn "Node.js not found — attempting to install..."
+  if [[ "$OSTYPE" == darwin* ]]; then
+    if command -v brew &>/dev/null; then
+      brew install node@22
+      brew link --overwrite node@22
+    else
+      warn "Homebrew not found — installing Homebrew first..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      # Add brew to PATH for Apple Silicon & Intel Macs
+      if [ -f /opt/homebrew/bin/brew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      elif [ -f /usr/local/bin/brew ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+      fi
+      brew install node@22
+      brew link --overwrite node@22
+    fi
+  elif [[ "$OSTYPE" == linux* ]]; then
+    if command -v apt-get &>/dev/null; then
+      curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+      sudo apt-get install -y nodejs
+    elif command -v dnf &>/dev/null; then
+      curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -
+      sudo dnf install -y nodejs
+    else
+      fail "Could not install Node.js automatically."
+      MISSING_PREREQS+=("node")
+    fi
+  else
+    MISSING_PREREQS+=("node")
+  fi
+  hash -r 2>/dev/null
 fi
-success "Node.js $(node -v)"
+if command -v node &>/dev/null; then
+  success "Node.js $(node -v)"
+else
+  fail "Node.js is not installed."
+  MISSING_PREREQS+=("node")
+fi
 
+# If git or node are missing, show instructions and exit gracefully
+if [ ${#MISSING_PREREQS[@]} -gt 0 ]; then
+  echo ""
+  echo -e "${RED}${BOLD}Some required tools could not be installed automatically.${NC}"
+  echo -e "${BOLD}Please install the following manually and re-run this script:${NC}"
+  echo ""
+  for prereq in "${MISSING_PREREQS[@]}"; do
+    case "$prereq" in
+      git)
+        echo -e "  ${BOLD}Git${NC}"
+        echo "    • macOS:  xcode-select --install  (or)  brew install git"
+        echo "    • Linux:  sudo apt-get install git  (or)  sudo dnf install git"
+        echo "    • Download: https://git-scm.com"
+        echo ""
+        ;;
+      node)
+        echo -e "  ${BOLD}Node.js (v18+)${NC}"
+        echo "    • macOS:  brew install node@22"
+        echo "    • Linux:  https://nodejs.org/en/download"
+        echo "    • Download: https://nodejs.org"
+        echo ""
+        ;;
+    esac
+  done
+  echo -e "${BOLD}After installing, re-run:${NC}  bash setup.sh"
+  echo ""
+  exit 0
+fi
+
+# pnpm
 if ! command -v pnpm &>/dev/null; then
-  warn "pnpm not found — installing via corepack..."
-  corepack enable && corepack prepare pnpm@9 --activate
+  warn "pnpm not found — installing via npm..."
+  if npm install -g pnpm@9 2>/dev/null; then
+    : # installed via npm
+  elif command -v corepack &>/dev/null; then
+    warn "npm global install failed — trying corepack..."
+    corepack enable && corepack prepare pnpm@9 --activate
+  else
+    fail "Could not install pnpm. Try running: npm install -g pnpm@9"
+    exit 1
+  fi
+  # Refresh PATH so pnpm is discoverable
+  hash -r 2>/dev/null
+  if ! command -v pnpm &>/dev/null; then
+    fail "pnpm still not found after install. Close this terminal, open a new one, and re-run the script."
+    exit 1
+  fi
 fi
 success "pnpm $(pnpm -v)"
 
+# VS Code
 if ! command -v code &>/dev/null; then
   # On macOS, the CLI may exist inside the app bundle but not be on PATH
   if [ -f "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]; then
@@ -54,11 +167,12 @@ if ! command -v code &>/dev/null; then
       if command -v brew &>/dev/null; then
         brew install --cask visual-studio-code
       else
-        warn "Homebrew not found — installing Homebrew first..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install --cask visual-studio-code
+        fail "VS Code auto-install requires Homebrew. Install VS Code manually from https://code.visualstudio.com"
+        SKIP_VSCODE=1
       fi
-      export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+      if [ -z "$SKIP_VSCODE" ]; then
+        export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+      fi
     elif [[ "$OSTYPE" == linux* ]]; then
       if command -v apt-get &>/dev/null; then
         curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/ms.gpg
@@ -80,7 +194,8 @@ if ! command -v code &>/dev/null; then
   if [ -z "$SKIP_VSCODE" ] && command -v code &>/dev/null; then
     success "VS Code installed"
   elif [ -z "$SKIP_VSCODE" ]; then
-    fail "VS Code installation failed — skipping extension install"
+    warn "VS Code installation failed — skipping extension install."
+    warn "Install manually from https://code.visualstudio.com and re-run this script."
     SKIP_VSCODE=1
   fi
 fi
@@ -126,6 +241,12 @@ if [ -z "$SKIP_VSCODE" ]; then
   cd "$REPO_DIR"
 else
   warn "Skipped (VS Code CLI not available)"
+fi
+
+# Open the project in VS Code
+if [ -z "$SKIP_VSCODE" ] && command -v code &>/dev/null; then
+  code "$REPO_DIR"
+  success "Opened $REPO_DIR in VS Code"
 fi
 
 # ── Step 5: Done ──

@@ -16,6 +16,9 @@ Write-Host "╔═════════════════════�
 Write-Host "║       Grabber Demo Setup             ║" -ForegroundColor White
 Write-Host "╚══════════════════════════════════════╝" -ForegroundColor White
 
+# Track missing prerequisites for summary
+$MISSING_PREREQS = @()
+
 # ── Step 1: Prerequisites ──
 Step 1 "Checking prerequisites..."
 
@@ -26,11 +29,16 @@ if (!(Get-Command git -ErrorAction SilentlyContinue)) {
         winget install --id Git.Git -e --accept-source-agreements --accept-package-agreements
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     } else {
-        Fail "git not found. Install from https://git-scm.com"
-        exit 1
+        Fail "Could not install git automatically."
+        $MISSING_PREREQS += "git"
     }
 }
-Success "git $(git --version)"
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    Success "git $(git --version)"
+} else {
+    Fail "git is not installed."
+    if ($MISSING_PREREQS -notcontains "git") { $MISSING_PREREQS += "git" }
+}
 
 # Node.js
 if (!(Get-Command node -ErrorAction SilentlyContinue)) {
@@ -39,11 +47,43 @@ if (!(Get-Command node -ErrorAction SilentlyContinue)) {
         winget install --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     } else {
-        Fail "Node.js not found. Install from https://nodejs.org (v18+)"
-        exit 1
+        Fail "Could not install Node.js automatically."
+        $MISSING_PREREQS += "node"
     }
 }
-Success "Node.js $(node -v)"
+if (Get-Command node -ErrorAction SilentlyContinue) {
+    Success "Node.js $(node -v)"
+} else {
+    Fail "Node.js is not installed."
+    if ($MISSING_PREREQS -notcontains "node") { $MISSING_PREREQS += "node" }
+}
+
+# If git or node are missing, show instructions and exit gracefully
+if ($MISSING_PREREQS.Count -gt 0) {
+    Write-Host ""
+    Write-Host "Some required tools could not be installed automatically." -ForegroundColor Red
+    Write-Host "Please install the following manually and re-run this script:" -ForegroundColor White
+    Write-Host ""
+    foreach ($prereq in $MISSING_PREREQS) {
+        switch ($prereq) {
+            "git" {
+                Write-Host "  Git" -ForegroundColor White
+                Write-Host "    - winget install --id Git.Git -e"
+                Write-Host "    - Download: https://git-scm.com"
+                Write-Host ""
+            }
+            "node" {
+                Write-Host "  Node.js (v18+)" -ForegroundColor White
+                Write-Host "    - winget install --id OpenJS.NodeJS.LTS -e"
+                Write-Host "    - Download: https://nodejs.org"
+                Write-Host ""
+            }
+        }
+    }
+    Write-Host "After installing, re-run:  powershell -ExecutionPolicy Bypass -File setup.ps1" -ForegroundColor White
+    Write-Host ""
+    exit 0
+}
 
 # pnpm
 if (!(Get-Command pnpm -ErrorAction SilentlyContinue)) {
@@ -93,14 +133,16 @@ if (!(Get-Command code -ErrorAction SilentlyContinue)) {
             # Also add the default install path
             $env:Path += ";$env:LOCALAPPDATA\Programs\Microsoft VS Code\bin"
         } else {
-            Fail "VS Code not found and winget not available. Install from https://code.visualstudio.com"
+            Warn "VS Code not found and winget not available."
+            Warn "Install manually from https://code.visualstudio.com and re-run this script."
             $SKIP_VSCODE = $true
         }
     }
     if (-not $SKIP_VSCODE -and (Get-Command code -ErrorAction SilentlyContinue)) {
         Success "VS Code installed"
     } elseif (-not $SKIP_VSCODE) {
-        Fail "VS Code installation failed — skipping extension install"
+        Warn "VS Code installation failed — skipping extension install."
+        Warn "Install manually from https://code.visualstudio.com and re-run this script."
         $SKIP_VSCODE = $true
     }
 }
