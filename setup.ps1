@@ -108,7 +108,7 @@ if (!(Get-Command code -ErrorAction SilentlyContinue)) {
 # ── Step 2: Clone repo ──
 Step 2 "Cloning repository..."
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptDir = if ($MyInvocation.MyCommand.Path) { Split-Path -Parent $MyInvocation.MyCommand.Path } else { $PWD.Path }
 $packageJson = Join-Path $scriptDir "package.json"
 
 if ((Test-Path $packageJson) -and (Select-String -Path $packageJson -Pattern "grabber-demo" -Quiet)) {
