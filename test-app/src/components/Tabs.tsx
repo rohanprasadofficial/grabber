@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
+import {
+  TabList,
+  Tab,
+  SelectTabEvent,
+  SelectTabData,
+} from '@fluentui/react-components';
 
-interface Tab {
+interface TabItem {
   label: string;
   content: React.ReactNode;
 }
 
-export function Tabs({ tabs, defaultIndex = 0 }: { tabs: Tab[]; defaultIndex?: number }) {
+export function Tabs({ tabs, defaultIndex = 0 }: { tabs: TabItem[]; defaultIndex?: number }) {
   const [active, setActive] = useState(defaultIndex);
+
+  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
+    setActive(Number(data.value));
+  };
 
   return (
     <div>
-      <div style={{ display: 'flex', borderBottom: '1px solid #e0e0e0', marginBottom: '16px' }}>
+      <TabList
+        selectedValue={active}
+        onTabSelect={onTabSelect}
+        style={{ marginBottom: '16px' }}
+      >
         {tabs.map((tab, i) => (
-          <button
-            key={tab.label}
-            onClick={() => setActive(i)}
-            style={{
-              padding: '8px 16px',
-              border: 'none',
-              borderBottom: i === active ? '2px solid #0078d4' : '2px solid transparent',
-              background: 'transparent',
-              color: i === active ? '#0078d4' : '#616161',
-              fontSize: '13px',
-              fontWeight: i === active ? 600 : 400,
-              cursor: 'pointer',
-              marginBottom: '-1px',
-            }}
-          >
+          <Tab key={tab.label} value={i}>
             {tab.label}
-          </button>
+          </Tab>
         ))}
-      </div>
+      </TabList>
       <div>{tabs[active]?.content}</div>
     </div>
   );

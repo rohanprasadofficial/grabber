@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import {
+  Card,
+  Text,
+  tokens,
+  MessageBar,
+  MessageBarBody,
+} from '@fluentui/react-components';
 import { TextInput, SelectInput, ToggleField } from '../components/FormField';
 import { Button } from '../components/Button';
 
@@ -8,17 +15,13 @@ function SettingsSection({ title, description, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div style={{
-      padding: '20px',
-      border: '1px solid #e0e0e0',
-      borderRadius: '8px',
-      background: '#fff',
-      marginBottom: '16px',
-    }}>
-      <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#242424', margin: '0 0 2px' }}>{title}</h3>
-      <p style={{ fontSize: '12px', color: '#8a8a8a', margin: '0 0 16px' }}>{description}</p>
+    <Card style={{ marginBottom: '16px' }}>
+      <Text size={400} weight="semibold" block>{title}</Text>
+      <Text size={200} style={{ color: tokens.colorNeutralForeground4, display: 'block', marginBottom: '16px' }}>
+        {description}
+      </Text>
       {children}
-    </div>
+    </Card>
   );
 }
 
@@ -41,10 +44,10 @@ export function SettingsPage() {
 
   return (
     <main style={{ flex: 1, padding: '24px', overflow: 'auto', maxWidth: '680px' }}>
-      <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#242424', margin: '0 0 4px' }}>Settings</h2>
-      <p style={{ fontSize: '13px', color: '#616161', margin: '0 0 24px' }}>
+      <Text as="h2" size={500} weight="semibold" block style={{ marginBottom: '4px' }}>Settings</Text>
+      <Text size={300} style={{ color: tokens.colorNeutralForeground3, display: 'block', marginBottom: '24px' }}>
         Manage your account preferences and notifications.
-      </p>
+      </Text>
 
       <SettingsSection title="Profile" description="Your personal information and preferences.">
         <TextInput label="Display Name" value={displayName} onChange={setDisplayName} />
@@ -98,8 +101,12 @@ export function SettingsPage() {
         />
       </SettingsSection>
 
-      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-        {saved && <span style={{ fontSize: '13px', color: '#107c10', alignSelf: 'center' }}>Settings saved!</span>}
+      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+        {saved && (
+          <MessageBar intent="success">
+            <MessageBarBody>Settings saved!</MessageBarBody>
+          </MessageBar>
+        )}
         <Button variant="secondary">Cancel</Button>
         <Button variant="primary" onClick={handleSave}>Save Changes</Button>
       </div>

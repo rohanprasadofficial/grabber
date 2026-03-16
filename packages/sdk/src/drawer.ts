@@ -280,7 +280,6 @@ function buildDrawerHTML(): string {
 
   <div id="sp-main" class="main" style="display:none;">
     <div id="sp-info" class="info-bar"></div>
-    <div id="sp-design" class="design-panel"></div>
     <div id="sp-footer" class="footer-bar" style="display:none;">
       <span class="footer-count"><span id="sp-count">0</span> modified</span>
       <div class="footer-actions">
@@ -293,11 +292,12 @@ function buildDrawerHTML(): string {
         <span class="bag-title"><span id="sp-bag-count">0</span> changes in bag</span>
         <div class="bag-actions">
           <button id="sp-bag-clear" class="btn-sm">Clear</button>
-          <button id="sp-bag-send" class="btn-accent-sm">Send all to Copilot</button>
+          <button id="sp-bag-send" class="btn-accent-sm btn-send-copilot">Send all to Copilot</button>
         </div>
       </div>
       <div id="sp-bag-list" class="bag-list"></div>
     </div>
+    <div id="sp-design" class="design-panel"></div>
   </div>
 </div>
 <script>${DRAWER_JS}</script>
@@ -468,18 +468,21 @@ body { background: var(--bg0); color: var(--t1); font: 12px/1.5 var(--f); overfl
 .slot-rule { font: 10px var(--m); color: var(--t2); padding-left: 12px; line-height: 1.7; }
 
 /* Footer */
-.footer-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--divider); background: var(--bg1); }
-.footer-count { font-size: 11px; font-weight: 500; color: var(--orange); }
+.footer-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--divider); background: linear-gradient(135deg, #fff7ed, #fef3c7); position: sticky; top: 0; z-index: 10; }
+.footer-count { font-size: 11px; font-weight: 600; color: #b45309; }
 .footer-actions { display: flex; gap: 8px; }
 .btn-sm { padding: 5px 12px; background: var(--bg0); border: 1px solid var(--border); border-radius: var(--r); color: var(--t2); font: 11px var(--f); cursor: pointer; transition: all 0.15s; }
 .btn-sm:hover { color: var(--t1); background: var(--bg2); }
-.btn-accent-sm { padding: 5px 12px; background: var(--accent); border: 1px solid var(--accent); border-radius: var(--r); color: #fff; font: 11px var(--f); font-weight: 500; cursor: pointer; transition: all 0.15s; }
-.btn-accent-sm:hover { opacity: 0.9; }
+.btn-accent-sm { padding: 6px 14px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border: none; border-radius: var(--r); color: #fff; font: 11px var(--f); font-weight: 600; cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 8px rgba(109, 40, 217, 0.35); }
+.btn-accent-sm:hover { opacity: 0.92; box-shadow: 0 4px 12px rgba(109, 40, 217, 0.45); transform: translateY(-1px); }
+.btn-accent-sm:active { transform: translateY(0); }
+.btn-send-copilot { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35); }
+.btn-send-copilot:hover { box-shadow: 0 4px 12px rgba(5, 150, 105, 0.45); }
 
 /* Bag */
-.bag-bar { border-top: 1px solid var(--divider); background: var(--bg1); padding: 10px 16px; }
+.bag-bar { border-bottom: 1px solid var(--divider); background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 10px 16px; position: sticky; top: 0; z-index: 10; }
 .bag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.bag-title { font-size: 11px; font-weight: 600; color: var(--accent); }
+.bag-title { font-size: 11px; font-weight: 700; color: #1d4ed8; }
 .bag-actions { display: flex; gap: 6px; }
 .bag-list { display: flex; flex-direction: column; gap: 6px; }
 .bag-entry { background: var(--bg0); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 10px; font-size: 11px; }

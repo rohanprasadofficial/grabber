@@ -1,5 +1,10 @@
 import { createRoot } from 'react-dom/client';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { App } from './src/App';
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+root.render(
+  <FluentProvider theme={webLightTheme}>
+    <App />
+  </FluentProvider>
+);

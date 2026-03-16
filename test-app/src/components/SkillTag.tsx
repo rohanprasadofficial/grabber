@@ -1,18 +1,11 @@
 import React from 'react';
+import { Badge as FluentBadge } from '@fluentui/react-components';
 
 export function SkillTag({ label }: { label: string }) {
   return (
-    <span style={{
-      display: 'inline-flex',
-      padding: '3px 10px',
-      borderRadius: '4px',
-      background: '#f0f0f0',
-      color: '#424242',
-      fontSize: '12px',
-      fontWeight: 500,
-    }}>
+    <FluentBadge appearance="outline" color="informative" shape="rounded">
       {label}
-    </span>
+    </FluentBadge>
   );
 }
 

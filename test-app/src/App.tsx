@@ -1,4 +1,5 @@
 import React from 'react';
+import { tokens } from '@fluentui/react-components';
 import { GrabberDevTools } from '@grabber/sdk';
 import { useAppState } from './hooks/useAppState';
 import { Header } from './components/Header';
@@ -45,11 +46,12 @@ export function App() {
 
   return (
     <div style={{
-      fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif",
-      minHeight: '100vh',
-      background: '#f5f5f5',
+      fontFamily: tokens.fontFamilyBase,
+      height: '100vh',
+      background: tokens.colorNeutralBackground3,
       display: 'flex',
       flexDirection: 'column',
+      overflow: 'hidden',
     }}>
       <GrabberDevTools />
       <Header activePage={sidebarPage} onNavigate={state.navigate} />

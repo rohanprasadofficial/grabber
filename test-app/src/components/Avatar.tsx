@@ -1,52 +1,16 @@
 import React from 'react';
-
-const palette = ['#5b5fc7', '#0078d4', '#107c10', '#d13438', '#ca5010', '#8764b8', '#008272', '#4f6bed'];
-
-function colorFromName(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return palette[Math.abs(hash) % palette.length];
-}
+import { Avatar as FluentAvatar } from '@fluentui/react-components';
 
 export function Avatar({ name, size = 32, src }: { name: string; size?: number; src?: string }) {
-  const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
-  const bg = colorFromName(name);
-
-  if (src) {
-    return (
-      <img
-        src={src}
-        alt={name}
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: '50%',
-          objectFit: 'cover',
-          flexShrink: 0,
-        }}
-      />
-    );
-  }
+  // Map pixel sizes to Fluent Avatar sizes
+  const fluentSize = size <= 20 ? 20 : size <= 24 ? 24 : size <= 28 ? 28 : size <= 32 ? 32 : size <= 36 ? 36 : size <= 40 ? 40 : size <= 48 ? 48 : size <= 56 ? 56 : size <= 64 ? 64 : 72;
 
   return (
-    <div
-      title={name}
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: '50%',
-        background: bg,
-        color: '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: `${Math.round(size * 0.38)}px`,
-        fontWeight: 600,
-        flexShrink: 0,
-        letterSpacing: '-0.02em',
-      }}
-    >
-      {initials}
-    </div>
+    <FluentAvatar
+      name={name}
+      image={src ? { src } : undefined}
+      size={fluentSize as 20 | 24 | 28 | 32 | 36 | 40 | 48 | 56 | 64 | 72}
+      color="colorful"
+    />
   );
 }

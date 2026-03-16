@@ -1,4 +1,13 @@
 import React from 'react';
+import {
+  Input,
+  Label,
+  Select,
+  Switch,
+  Text,
+  tokens,
+  Field,
+} from '@fluentui/react-components';
 
 export function TextInput({ label, value, onChange, placeholder }: {
   label: string;
@@ -7,27 +16,13 @@ export function TextInput({ label, value, onChange, placeholder }: {
   placeholder?: string;
 }) {
   return (
-    <div style={{ marginBottom: '16px' }}>
-      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#424242', marginBottom: '4px' }}>
-        {label}
-      </label>
-      <input
-        type="text"
+    <Field label={label} style={{ marginBottom: '16px' }}>
+      <Input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(_e, data) => onChange(data.value)}
         placeholder={placeholder}
-        style={{
-          width: '100%',
-          padding: '6px 12px',
-          borderRadius: '4px',
-          border: '1px solid #d1d1d1',
-          fontSize: '13px',
-          color: '#242424',
-          boxSizing: 'border-box',
-          outline: 'none',
-        }}
       />
-    </div>
+    </Field>
   );
 }
 
@@ -38,30 +33,16 @@ export function SelectInput({ label, value, options, onChange }: {
   onChange: (v: string) => void;
 }) {
   return (
-    <div style={{ marginBottom: '16px' }}>
-      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#424242', marginBottom: '4px' }}>
-        {label}
-      </label>
-      <select
+    <Field label={label} style={{ marginBottom: '16px' }}>
+      <Select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '6px 12px',
-          borderRadius: '4px',
-          border: '1px solid #d1d1d1',
-          fontSize: '13px',
-          color: '#242424',
-          background: '#fff',
-          boxSizing: 'border-box',
-          outline: 'none',
-        }}
+        onChange={(_e, data) => onChange(data.value)}
       >
         {options.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
-      </select>
-    </div>
+      </Select>
+    </Field>
   );
 }
 
@@ -72,36 +53,25 @@ export function ToggleField({ label, description, checked, onChange }: {
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #f0f0f0' }}>
+    <div style={{
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      padding: '12px 0',
+      borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    }}>
       <div>
-        <div style={{ fontSize: '13px', fontWeight: 500, color: '#242424' }}>{label}</div>
-        {description && <div style={{ fontSize: '12px', color: '#8a8a8a', marginTop: '2px' }}>{description}</div>}
+        <Text weight="medium" size={300}>{label}</Text>
+        {description && (
+          <Text size={200} style={{ display: 'block', color: tokens.colorNeutralForeground4, marginTop: '2px' }}>
+            {description}
+          </Text>
+        )}
       </div>
-      <div
-        onClick={() => onChange(!checked)}
-        style={{
-          width: '36px',
-          height: '20px',
-          borderRadius: '10px',
-          background: checked ? '#0078d4' : '#c8c8c8',
-          position: 'relative',
-          cursor: 'pointer',
-          flexShrink: 0,
-          marginTop: '2px',
-        }}
-      >
-        <div style={{
-          width: '16px',
-          height: '16px',
-          borderRadius: '50%',
-          background: '#fff',
-          position: 'absolute',
-          top: '2px',
-          left: checked ? '18px' : '2px',
-          transition: 'left 0.15s ease',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-        }} />
-      </div>
+      <Switch
+        checked={checked}
+        onChange={(_e, data) => onChange(data.checked)}
+      />
     </div>
   );
 }

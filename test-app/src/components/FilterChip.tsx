@@ -1,4 +1,5 @@
 import React from 'react';
+import { Select } from '@fluentui/react-components';
 
 export function FilterChip({ label, value, options, onChange }: {
   label: string;
@@ -7,25 +8,16 @@ export function FilterChip({ label, value, options, onChange }: {
   onChange: (value: string) => void;
 }) {
   return (
-    <select
+    <Select
       value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        padding: '4px 10px',
-        borderRadius: '4px',
-        border: '1px solid #d1d1d1',
-        background: value ? '#eff6fc' : '#fff',
-        color: value ? '#0078d4' : '#616161',
-        fontSize: '12px',
-        fontWeight: value ? 600 : 400,
-        cursor: 'pointer',
-        outline: 'none',
-      }}
+      onChange={(_e, data) => onChange(data.value)}
+      size="small"
+      appearance="outline"
     >
       <option value="">{label}</option>
       {options.map((opt) => (
         <option key={opt} value={opt}>{opt}</option>
       ))}
-    </select>
+    </Select>
   );
 }

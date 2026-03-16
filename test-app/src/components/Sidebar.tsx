@@ -1,5 +1,9 @@
 import React from 'react';
-import { Badge } from './Badge';
+import {
+  Text,
+  Badge as FluentBadge,
+  tokens,
+} from '@fluentui/react-components';
 import { Page } from '../hooks/useAppState';
 
 interface NavItem {
@@ -35,9 +39,9 @@ function SidebarItem({ label, active, badge, onClick }: {
       onClick={onClick}
       style={{
         padding: '7px 12px',
-        borderRadius: '6px',
-        background: active ? '#eff6fc' : 'transparent',
-        color: active ? '#0078d4' : '#424242',
+        borderRadius: tokens.borderRadiusMedium,
+        background: active ? tokens.colorBrandBackground2 : 'transparent',
+        color: active ? tokens.colorBrandForeground1 : tokens.colorNeutralForeground2,
         fontSize: '13px',
         fontWeight: active ? 600 : 400,
         cursor: 'pointer',
@@ -47,7 +51,11 @@ function SidebarItem({ label, active, badge, onClick }: {
       }}
     >
       {label}
-      {badge && <Badge text={badge} variant="info" />}
+      {badge && (
+        <FluentBadge appearance="tint" color="informative" size="small" shape="rounded">
+          {badge}
+        </FluentBadge>
+      )}
     </div>
   );
 }
@@ -57,8 +65,8 @@ export function Sidebar({ activePage, onNavigate }: { activePage: Page; onNaviga
     <aside style={{
       width: '200px',
       padding: '16px 8px',
-      borderRight: '1px solid #e0e0e0',
-      background: '#fafafa',
+      borderRight: `1px solid ${tokens.colorNeutralStroke2}`,
+      background: tokens.colorNeutralBackground2,
       display: 'flex',
       flexDirection: 'column',
       gap: '4px',
@@ -67,16 +75,19 @@ export function Sidebar({ activePage, onNavigate }: { activePage: Page; onNaviga
     }}>
       {sections.map((section) => (
         <div key={section.title} style={{ marginBottom: '12px' }}>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#8a8a8a',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            padding: '0 12px 6px',
-          }}>
+          <Text
+            size={100}
+            weight="semibold"
+            style={{
+              color: tokens.colorNeutralForeground4,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              padding: '0 12px 6px',
+              display: 'block',
+            }}
+          >
             {section.title}
-          </div>
+          </Text>
           {section.items.map((item) => (
             <SidebarItem
               key={item.page}

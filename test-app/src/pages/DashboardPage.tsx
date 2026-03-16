@@ -1,4 +1,17 @@
 import React from 'react';
+import {
+  Card,
+  Text,
+  tokens,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+  TableCellLayout,
+  ProgressBar as FluentProgressBar,
+} from '@fluentui/react-components';
 import { Employee } from '../data/employees';
 import { MetricCard } from '../components/MetricCard';
 import { Avatar } from '../components/Avatar';
@@ -13,14 +26,14 @@ function RecentHireRow({ emp, onClick }: { emp: Employee; onClick: () => void })
         alignItems: 'center',
         gap: '12px',
         padding: '10px 0',
-        borderBottom: '1px solid #f5f5f5',
+        borderBottom: `1px solid ${tokens.colorNeutralStroke3}`,
         cursor: 'pointer',
       }}
     >
       <Avatar name={emp.name} size={32} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: '13px', fontWeight: 500, color: '#242424' }}>{emp.name}</div>
-        <div style={{ fontSize: '12px', color: '#8a8a8a' }}>{emp.title}</div>
+        <Text weight="medium" size={300} style={{ display: 'block' }}>{emp.name}</Text>
+        <Text size={200} style={{ color: tokens.colorNeutralForeground4 }}>{emp.title}</Text>
       </div>
       <Badge text={emp.department} variant="neutral" />
     </div>
@@ -32,10 +45,10 @@ function DepartmentBar({ department, count, total, color }: { department: string
   return (
     <div style={{ marginBottom: '10px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-        <span style={{ fontSize: '12px', color: '#424242' }}>{department}</span>
-        <span style={{ fontSize: '12px', color: '#8a8a8a' }}>{count} ({pct}%)</span>
+        <Text size={200}>{department}</Text>
+        <Text size={200} style={{ color: tokens.colorNeutralForeground4 }}>{count} ({pct}%)</Text>
       </div>
-      <div style={{ height: '8px', borderRadius: '4px', background: '#f0f0f0', overflow: 'hidden' }}>
+      <div style={{ height: '8px', borderRadius: '4px', background: tokens.colorNeutralBackground4, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', borderRadius: '4px', background: color }} />
       </div>
     </div>
@@ -60,10 +73,10 @@ export function DashboardPage({ employees, onViewEmployee }: {
 
   return (
     <main style={{ flex: 1, padding: '24px', overflow: 'auto' }}>
-      <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#242424', margin: '0 0 4px' }}>Dashboard</h2>
-      <p style={{ fontSize: '13px', color: '#616161', margin: '0 0 24px' }}>
+      <Text as="h2" size={500} weight="semibold" block style={{ marginBottom: '4px' }}>Dashboard</Text>
+      <Text size={300} style={{ color: tokens.colorNeutralForeground3, display: 'block', marginBottom: '24px' }}>
         Organization overview and key metrics.
-      </p>
+      </Text>
 
       {/* Metrics */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
@@ -75,71 +88,72 @@ export function DashboardPage({ employees, onViewEmployee }: {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         {/* Department breakdown */}
-        <div style={{ padding: '20px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#242424', margin: '0 0 16px' }}>
+        <Card>
+          <Text size={400} weight="semibold" block style={{ marginBottom: '16px' }}>
             Department Breakdown
-          </h3>
+          </Text>
           {Object.entries(deptCounts)
             .sort((a, b) => b[1] - a[1])
             .map(([dept, count]) => (
               <DepartmentBar key={dept} department={dept} count={count} total={employees.length} color={deptColors[dept] || '#616161'} />
             ))
           }
-        </div>
+        </Card>
 
         {/* Recent hires */}
-        <div style={{ padding: '20px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#242424', margin: '0 0 12px' }}>
+        <Card>
+          <Text size={400} weight="semibold" block style={{ marginBottom: '12px' }}>
             Recent Hires
-          </h3>
+          </Text>
           {recentHires.map((emp) => (
             <RecentHireRow key={emp.id} emp={emp} onClick={() => onViewEmployee(emp.id)} />
           ))}
-        </div>
+        </Card>
 
-        {/* Upcoming reviews */}
-        <div style={{ padding: '20px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff', gridColumn: 'span 2' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#242424', margin: '0 0 12px' }}>
+        {/* Active Goals */}
+        <Card style={{ gridColumn: 'span 2' }}>
+          <Text size={400} weight="semibold" block style={{ marginBottom: '12px' }}>
             Active Goals Snapshot
-          </h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #e0e0e0' }}>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#424242' }}>Employee</th>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#424242' }}>Goal</th>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#424242', width: '200px' }}>Progress</th>
-              </tr>
-            </thead>
-            <tbody>
+          </Text>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHeaderCell>Employee</TableHeaderCell>
+                <TableHeaderCell>Goal</TableHeaderCell>
+                <TableHeaderCell style={{ width: '200px' }}>Progress</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {employees.slice(0, 6).flatMap((emp) =>
                 emp.goals.slice(0, 1).map((goal) => (
-                  <tr key={`${emp.id}-${goal.name}`} style={{ borderBottom: '1px solid #f5f5f5' }}>
-                    <td style={{ padding: '8px 12px' }}>
+                  <TableRow key={`${emp.id}-${goal.name}`}>
+                    <TableCell>
+                      <TableCellLayout media={<Avatar name={emp.name} size={24} />}>
+                        <Text>{emp.name}</Text>
+                      </TableCellLayout>
+                    </TableCell>
+                    <TableCell>
+                      <Text style={{ color: tokens.colorNeutralForeground3 }}>{goal.name}</Text>
+                    </TableCell>
+                    <TableCell>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Avatar name={emp.name} size={22} />
-                        <span style={{ color: '#242424' }}>{emp.name}</span>
+                        <FluentProgressBar
+                          value={goal.progress / 100}
+                          color={goal.progress >= 80 ? 'success' : goal.progress >= 50 ? 'brand' : 'warning'}
+                          thickness="medium"
+                          style={{ flex: 1 }}
+                        />
+                        <Text size={200} style={{ color: tokens.colorNeutralForeground3, width: '32px', textAlign: 'right' }}>
+                          {goal.progress}%
+                        </Text>
                       </div>
-                    </td>
-                    <td style={{ padding: '8px 12px', color: '#616161' }}>{goal.name}</td>
-                    <td style={{ padding: '8px 12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ flex: 1, height: '6px', borderRadius: '3px', background: '#f0f0f0', overflow: 'hidden' }}>
-                          <div style={{
-                            width: `${goal.progress}%`,
-                            height: '100%',
-                            borderRadius: '3px',
-                            background: goal.progress >= 80 ? '#107c10' : goal.progress >= 50 ? '#0078d4' : '#ca5010',
-                          }} />
-                        </div>
-                        <span style={{ fontSize: '12px', color: '#616161', width: '32px', textAlign: 'right' }}>{goal.progress}%</span>
-                      </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       </div>
     </main>
   );

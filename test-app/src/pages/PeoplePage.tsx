@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text, tokens } from '@fluentui/react-components';
 import { Employee, departments, locations, statuses } from '../data/employees';
 import { Filters } from '../hooks/useAppState';
 import { SearchBar } from '../components/SearchBar';
@@ -16,10 +17,10 @@ export function PeoplePage({ employees, filters, onFiltersChange, onViewEmployee
     <main style={{ flex: 1, padding: '24px', overflow: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#242424', margin: '0 0 4px' }}>People</h2>
-          <p style={{ fontSize: '13px', color: '#616161', margin: 0 }}>
+          <Text as="h2" size={500} weight="semibold" block style={{ marginBottom: '4px' }}>People</Text>
+          <Text size={300} style={{ color: tokens.colorNeutralForeground3 }}>
             {employees.length} employee{employees.length !== 1 ? 's' : ''} found
-          </p>
+          </Text>
         </div>
         <Button variant="primary">+ Add Employee</Button>
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text, tokens } from '@fluentui/react-components';
 
 interface InfoItem {
   label: string;
@@ -14,12 +15,22 @@ export function InfoGrid({ items }: { items: InfoItem[] }) {
     }}>
       {items.map((item) => (
         <div key={item.label}>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: '#8a8a8a', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '4px' }}>
+          <Text
+            size={100}
+            weight="semibold"
+            style={{
+              color: tokens.colorNeutralForeground4,
+              textTransform: 'uppercase',
+              letterSpacing: '0.3px',
+              display: 'block',
+              marginBottom: '4px',
+            }}
+          >
             {item.label}
-          </div>
-          <div style={{ fontSize: '13px', color: '#242424' }}>
+          </Text>
+          <Text size={300}>
             {item.value}
-          </div>
+          </Text>
         </div>
       ))}
     </div>

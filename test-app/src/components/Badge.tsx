@@ -1,46 +1,31 @@
 import React from 'react';
+import { Badge as FluentBadge, PresenceBadge } from '@fluentui/react-components';
 
 export type BadgeVariant = 'info' | 'success' | 'warning' | 'error' | 'neutral';
 
-const styles: Record<BadgeVariant, { bg: string; color: string }> = {
-  info:    { bg: '#e8f4fd', color: '#0078d4' },
-  success: { bg: '#dff6dd', color: '#107c10' },
-  warning: { bg: '#fff4ce', color: '#797600' },
-  error:   { bg: '#fde7e9', color: '#d13438' },
-  neutral: { bg: '#f0f0f0', color: '#616161' },
+const variantMap: Record<BadgeVariant, 'informative' | 'success' | 'warning' | 'danger' | 'important'> = {
+  info: 'informative',
+  success: 'success',
+  warning: 'warning',
+  error: 'danger',
+  neutral: 'important',
 };
 
 export function Badge({ text, variant = 'neutral' }: { text: string; variant?: BadgeVariant }) {
-  const s = styles[variant];
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      borderRadius: '100px',
-      background: s.bg,
-      color: s.color,
-      fontSize: '11px',
-      fontWeight: 600,
-      lineHeight: '16px',
-      whiteSpace: 'nowrap',
-    }}>
+    <FluentBadge
+      appearance="tint"
+      color={variantMap[variant]}
+      shape="rounded"
+    >
       {text}
-    </span>
+    </FluentBadge>
   );
 }
 
 export function StatusDot({ status }: { status: 'Active' | 'On Leave' | 'Offboarding' }) {
-  const color = status === 'Active' ? '#107c10' : status === 'On Leave' ? '#ca5010' : '#d13438';
+  const presenceStatus = status === 'Active' ? 'available' : status === 'On Leave' ? 'away' : 'busy';
   return (
-    <span style={{
-      display: 'inline-block',
-      width: '8px',
-      height: '8px',
-      borderRadius: '50%',
-      background: color,
-      marginRight: '6px',
-      flexShrink: 0,
-    }} />
+    <PresenceBadge status={presenceStatus} size="tiny" style={{ marginRight: '6px' }} />
   );
 }

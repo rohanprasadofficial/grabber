@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text, tokens } from '@fluentui/react-components';
 
 interface TimelineItem {
   date: string;
@@ -18,20 +19,20 @@ function TimelineEntry({ item }: { item: TimelineItem }) {
           width: '10px',
           height: '10px',
           borderRadius: '50%',
-          background: '#0078d4',
-          border: '2px solid #fff',
-          boxShadow: '0 0 0 2px #0078d4',
+          background: tokens.colorBrandBackground,
+          border: `2px solid ${tokens.colorNeutralBackground1}`,
+          boxShadow: `0 0 0 2px ${tokens.colorBrandBackground}`,
           zIndex: 1,
         }} />
-        <div style={{ width: '2px', flex: 1, background: '#e0e0e0', marginTop: '4px' }} />
+        <div style={{ width: '2px', flex: 1, background: tokens.colorNeutralStroke2, marginTop: '4px' }} />
       </div>
       <div style={{ paddingBottom: '8px' }}>
-        <div style={{ fontSize: '12px', color: '#8a8a8a', marginBottom: '2px' }}>
+        <Text size={200} style={{ color: tokens.colorNeutralForeground4, display: 'block', marginBottom: '2px' }}>
           {formatDate(item.date)}
-        </div>
-        <div style={{ fontSize: '13px', color: '#242424' }}>
+        </Text>
+        <Text size={300}>
           {item.event}
-        </div>
+        </Text>
       </div>
     </div>
   );

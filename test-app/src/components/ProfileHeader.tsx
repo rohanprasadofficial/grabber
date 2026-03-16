@@ -1,4 +1,6 @@
 import React from 'react';
+import { Text, tokens } from '@fluentui/react-components';
+import { ArrowLeftRegular } from '@fluentui/react-icons';
 import { Employee } from '../data/employees';
 import { Avatar } from './Avatar';
 import { Badge, StatusDot } from './Badge';
@@ -14,45 +16,31 @@ export function ProfileHeader({ employee, onBack }: { employee: Employee; onBack
   return (
     <div style={{
       padding: '24px',
-      background: '#fff',
-      borderBottom: '1px solid #e0e0e0',
+      background: tokens.colorNeutralBackground1,
+      borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     }}>
-      <button
-        onClick={onBack}
-        style={{
-          border: 'none',
-          background: 'transparent',
-          color: '#0078d4',
-          fontSize: '13px',
-          cursor: 'pointer',
-          padding: 0,
-          marginBottom: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-        }}
-      >
-        &larr; Back to People
-      </button>
+      <Button variant="ghost" size="sm" onClick={onBack}>
+        <ArrowLeftRegular /> Back to People
+      </Button>
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', marginTop: '16px' }}>
         <Avatar name={employee.name} size={64} />
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#242424', margin: 0 }}>
+            <Text size={500} weight="semibold">
               {employee.name}
-            </h2>
+            </Text>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <StatusDot status={employee.status} />
               <Badge text={employee.status} variant={statusVariant(employee.status)} />
             </div>
           </div>
-          <div style={{ fontSize: '14px', color: '#616161', marginBottom: '2px' }}>
+          <Text size={300} style={{ color: tokens.colorNeutralForeground3, display: 'block', marginBottom: '2px' }}>
             {employee.title} &middot; {employee.department}
-          </div>
-          <div style={{ fontSize: '13px', color: '#8a8a8a' }}>
+          </Text>
+          <Text size={200} style={{ color: tokens.colorNeutralForeground4 }}>
             {employee.location} &middot; {employee.email}
-          </div>
+          </Text>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <Button variant="secondary">Edit Profile</Button>

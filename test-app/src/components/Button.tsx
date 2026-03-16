@@ -1,4 +1,8 @@
 import React from 'react';
+import {
+  Button as FluentButton,
+  Tooltip,
+} from '@fluentui/react-components';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -8,62 +12,34 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-const variantStyles = {
-  primary:   { bg: '#0078d4', color: '#fff', border: 'none', hoverBg: '#106ebe' },
-  secondary: { bg: '#fff', color: '#242424', border: '1px solid #d1d1d1', hoverBg: '#f5f5f5' },
-  ghost:     { bg: 'transparent', color: '#0078d4', border: 'none', hoverBg: '#f0f0f0' },
-  danger:    { bg: '#d13438', color: '#fff', border: 'none', hoverBg: '#a4262c' },
-};
-
 export function Button({ children, onClick, variant = 'secondary', size = 'md', disabled }: ButtonProps) {
-  const v = variantStyles[variant];
-  const pad = size === 'sm' ? '4px 12px' : '6px 16px';
-  const fontSize = size === 'sm' ? '12px' : '13px';
+  const appearance = variant === 'primary' ? 'primary'
+    : variant === 'ghost' ? 'transparent'
+    : variant === 'danger' ? 'primary'
+    : 'secondary';
 
   return (
-    <button
-      onClick={disabled ? undefined : onClick}
-      style={{
-        padding: pad,
-        borderRadius: '4px',
-        border: v.border,
-        background: disabled ? '#f0f0f0' : v.bg,
-        color: disabled ? '#a0a0a0' : v.color,
-        fontSize,
-        fontWeight: 500,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        lineHeight: '20px',
-      }}
+    <FluentButton
+      appearance={appearance}
+      size={size === 'sm' ? 'small' : 'medium'}
+      disabled={disabled}
+      onClick={onClick}
+      style={variant === 'danger' ? { backgroundColor: '#d13438', borderColor: '#d13438' } : undefined}
     >
       {children}
-    </button>
+    </FluentButton>
   );
 }
 
 export function IconButton({ icon, label, onClick }: { icon: string; label: string; onClick?: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      title={label}
-      style={{
-        width: '28px',
-        height: '28px',
-        borderRadius: '4px',
-        border: '1px solid #e0e0e0',
-        background: '#fff',
-        color: '#616161',
-        fontSize: '14px',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 0,
-      }}
-    >
-      {icon}
-    </button>
+    <Tooltip content={label} relationship="label">
+      <FluentButton
+        appearance="subtle"
+        size="small"
+        onClick={onClick}
+        icon={<span>{icon}</span>}
+      />
+    </Tooltip>
   );
 }
