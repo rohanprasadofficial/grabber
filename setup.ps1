@@ -162,6 +162,12 @@ if (-not $SKIP_VSCODE) {
     Warn "Skipped (VS Code CLI not available)"
 }
 
+# Open the project in VS Code
+if (-not $SKIP_VSCODE) {
+    code $REPO_DIR
+    Success "Opened $REPO_DIR in VS Code"
+}
+
 # ── Step 5: Done ──
 Step 5 "Setup complete!"
 
