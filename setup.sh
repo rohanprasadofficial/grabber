@@ -15,8 +15,7 @@ warn() { echo -e "  ${YELLOW}!${NC} $1"; }
 fail() { echo -e "  ${RED}✗${NC} $1"; }
 
 # ── Configuration ──
-# TODO: Update this URL once the repo is pushed to GitHub
-REPO_URL="https://github.com/AK-Microsoft/grabber-demo.git"
+REPO_URL="https://github.com/rohanprasadofficial/grabber.git"
 CLONE_DIR="grabber-demo"
 
 echo -e "${BOLD}╔══════════════════════════════════════╗${NC}"

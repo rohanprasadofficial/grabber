@@ -7,13 +7,13 @@ Grabber lets you select React UI elements in the browser and send rich context (
 Run this single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/AK-Microsoft/grabber-demo/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rohanprasadofficial/grabber/main/setup.sh | bash
 ```
 
 Or if you prefer to clone first:
 
 ```bash
-git clone https://github.com/AK-Microsoft/grabber-demo.git
+git clone https://github.com/rohanprasadofficial/grabber.git
 cd grabber-demo
 ./setup.sh
 ```
