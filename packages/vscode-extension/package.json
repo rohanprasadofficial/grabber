@@ -1,0 +1,50 @@
+{
+  "name": "grabber-vscode",
+  "displayName": "UI Grabber",
+  "description": "Select React elements in browser and send context to GitHub Copilot",
+  "version": "0.1.0",
+  "publisher": "grabber",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "grabber.showStatus", "title": "Grabber: Show Connection Status" },
+      { "command": "grabber.restartServer", "title": "Grabber: Restart Server" }
+    ],
+    "configuration": {
+      "title": "UI Grabber",
+      "properties": {
+        "grabber.port": {
+          "type": "number",
+          "default": 4567,
+          "description": "Port for SDK communication"
+        },
+        "grabber.autoSubmit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically submit prompt to Copilot Chat"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "dev": "npm run build -- --watch",
+    "package": "npm run build && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
+    "@vscode/vsce": "^3.7.1",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

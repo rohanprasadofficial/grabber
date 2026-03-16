@@ -1,0 +1,11 @@
+{
+  "name": "grabber-demo",
+  "private": true,
+  "scripts": {
+    "setup": "pnpm install && pnpm build",
+    "build": "pnpm --filter @grabber/sdk build && pnpm --filter grabber-vscode build",
+    "start": "pnpm --filter grabber-test-app dev",
+    "package-extension": "cd packages/vscode-extension && pnpm package"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
